@@ -1,8 +1,3 @@
-Flask
-openai
-scikit-learn
-pandas
 joblib
-python-dotenv
-requests
-gunicorn
+pandas
+scikit-learn
