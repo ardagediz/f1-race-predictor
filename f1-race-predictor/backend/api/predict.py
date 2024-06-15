@@ -1,34 +1,19 @@
 import json
-import joblib
-from http.server import BaseHTTPRequestHandler
+from urllib.request import urlopen
 
-# Load the trained model
-model = joblib.load('api/model/random_forest_model.joblib')
+def handler(event, context):
+    driver_number = event.get('queryStringParameters', {}).get('driver_number', '55')
+    session_key = event.get('queryStringParameters', {}).get('session_key', '9159')
+    speed = event.get('queryStringParameters', {}).get('speed', '315')
 
-class handler(BaseHTTPRequestHandler):
-    def do_POST(self):
-        content_length = int(self.headers['Content-Length'])
-        post_data = self.rfile.read(content_length)
-        data = json.loads(post_data)
+    url = f'https://api.openf1.org/v1/car_data?driver_number={driver_number}&session_key={session_key}&speed>={speed}'
+    response = urlopen(url)
+    data = json.loads(response.read().decode('utf-8'))
 
-        feature1 = data.get('feature1')
-        feature2 = data.get('feature2')
-        feature3 = data.get('feature3')
-
-        # Perform prediction
-        prediction = model.predict([[feature1, feature2, feature3]])
-
-        # Send response
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
-        self.wfile.write(json.dumps({'prediction': prediction[0]}).encode())
-
-def main():
-    from http.server import HTTPServer
-    server_address = ('', 8000)
-    httpd = HTTPServer(server_address, handler)
-    httpd.serve_forever()
-
-if __name__ == '__main__':
-    main()
+    return {
+        'statusCode': 200,
+        'body': json.dumps(data),
+        'headers': {
+            'Content-Type': 'application/json'
+        }
+    }

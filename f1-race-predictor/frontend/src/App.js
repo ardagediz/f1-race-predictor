@@ -1,36 +1,24 @@
-import React, { useState } from 'react';
-import './App.css';
+// frontend/src/App.js
+
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+// Import your existing components
+import HomePage from './HomePage'; // Adjust the import path if needed
+import AnotherPage from './AnotherPage'; // Adjust the import path if needed
+// Import the new F1Data component
+import F1Data from './F1Data';
 
 function App() {
-    const [prediction, setPrediction] = useState(null);
-
-    const handlePredict = async () => {
-        const feature1 = document.getElementById('feature1').value;
-        const feature2 = document.getElementById('feature2').value;
-        const feature3 = document.getElementById('feature3').value;
-
-        const response = await fetch('/api/predict', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ feature1, feature2, feature3 }),
-        });
-        const data = await response.json();
-        setPrediction(data.prediction);
-    };
-
     return (
-        <div className="App">
-            <h1>F1 Race Predictor</h1>
-            <div>
-                <input type="number" id="feature1" placeholder="Feature 1" />
-                <input type="number" id="feature2" placeholder="Feature 2" />
-                <input type="number" id="feature3" placeholder="Feature 3" />
-                <button onClick={handlePredict}>Predict</button>
+        <Router>
+            <div className="App">
+                <Switch>
+                    <Route exact path="/" component={HomePage} />
+                    <Route path="/another" component={AnotherPage} />
+                    <Route path="/f1data" component={F1Data} /> {/* New route for F1 data */}
+                </Switch>
             </div>
-            {prediction && <div id="result">Prediction: {prediction}</div>}
-        </div>
+        </Router>
     );
 }
 
