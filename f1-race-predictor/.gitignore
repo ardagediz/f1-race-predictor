@@ -2,3 +2,5 @@
 __pycache__
 *.pyc
 joblib
+node_modules
+build
